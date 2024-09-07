@@ -53,8 +53,8 @@ export function ProductForm({ product, setIsOpen, setIsOpenPopover }: Props) {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       title: product?.title || "",
-      price: product?.price,
-      stock: product?.stock,
+      price: product?.price || 0,
+      stock: product?.stock || 0,
     },
   });
 
