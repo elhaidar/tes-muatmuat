@@ -17,10 +17,13 @@ import { toast } from "@/hooks/use-toast";
 import { Product } from "@/interfaces/product";
 import { generateNewId } from "@/lib/helper/generateNewId";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { addProduct } from "@/redux/productSlice";
+import { addProduct, editProduct } from "@/redux/productSlice";
+import { SetStateAction } from "react";
 
 interface Props {
   product?: Product;
+  setIsOpen: React.Dispatch<SetStateAction<boolean>>;
+  setIsOpenPopover?: React.Dispatch<SetStateAction<boolean>>;
 }
 
 const FormSchema = z.object({
@@ -41,7 +44,7 @@ const FormSchema = z.object({
     .pipe(z.coerce.number().min(1).max(999999999)),
 });
 
-export function ProductForm({ product }: Props) {
+export function ProductForm({ product, setIsOpen, setIsOpenPopover }: Props) {
   const { products } = useAppSelector((state) => state.products);
 
   const dispatch = useAppDispatch();
@@ -55,7 +58,7 @@ export function ProductForm({ product }: Props) {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function handleAddProduct(data: z.infer<typeof FormSchema>) {
     const { price, stock, title } = data;
     const payload: Product = {
       id: generateNewId(products),
@@ -68,13 +71,38 @@ export function ProductForm({ product }: Props) {
     };
     dispatch(addProduct(payload));
     toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(payload, null, 2)}</code>
-        </pre>
-      ),
+      title: "Success!",
+      description: "Product added successfully",
     });
+    setIsOpen(false);
+  }
+
+  function handleEditProduct(data: z.infer<typeof FormSchema>) {
+    if (!product) return;
+    const { price, stock, title } = data;
+    const payload = {
+      id: product.id,
+      title,
+      price,
+      stock,
+    };
+    dispatch(editProduct(payload));
+    toast({
+      title: "Success!",
+      description: "Product edited successfully",
+    });
+    setIsOpen(false);
+    if (setIsOpenPopover) {
+      setIsOpenPopover(false);
+    }
+  }
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (product) {
+      handleEditProduct(data);
+    } else {
+      handleAddProduct(data);
+    }
   }
 
   return (

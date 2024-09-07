@@ -9,10 +9,13 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { ProductForm } from "./product-form";
+import { useState } from "react";
 
 export default function AddProduct() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant={"ghost"}>
           <SquarePlus className="mr-2" />
@@ -26,7 +29,7 @@ export default function AddProduct() {
             Add a new product here. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
-        <ProductForm />
+        <ProductForm setIsOpen={setIsOpen} />
       </DialogContent>
     </Dialog>
   );

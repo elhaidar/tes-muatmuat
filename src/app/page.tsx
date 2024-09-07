@@ -11,11 +11,20 @@ async function getProducts() {
 }
 
 export default async function Home() {
-  const { products }: { products: Product[] } = await getProducts();
+  const { products }: { products: any[] } = await getProducts();
+  const formattedProducts: Product[] = products.map((item) => ({
+    id: item.id,
+    category: item.category,
+    description: item.description,
+    price: item.price,
+    stock: item.stock,
+    thumbnail: item.thumbnail,
+    title: item.title,
+  }));
 
   return (
     <ReduxProvider>
-      <Products products={products} />
+      <Products products={formattedProducts} />
     </ReduxProvider>
   );
 }

@@ -34,9 +34,29 @@ export const productSlice = createSlice({
       state.products = products;
       localStorage.setItem("products", JSON.stringify(products));
     },
+    editProduct: (
+      state,
+      action: PayloadAction<{
+        id: number;
+        title: string;
+        price: number;
+        stock: number;
+      }>
+    ) => {
+      const { id, title, price, stock } = action.payload;
+      const newProducts = state.products.map((item) => {
+        if (item.id === id) {
+          item = { ...item, title, price, stock };
+        }
+        return item;
+      });
+      state.products = newProducts;
+      localStorage.setItem("products", JSON.stringify(newProducts));
+    },
   },
 });
 
-export const { setProducts, deleteProduct, addProduct } = productSlice.actions;
+export const { setProducts, deleteProduct, addProduct, editProduct } =
+  productSlice.actions;
 
 export default productSlice.reducer;
